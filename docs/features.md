@@ -1,55 +1,84 @@
 # Feature Documentation
 
-This document describes all features of AussieBasket, current and planned.
+Everything AussieBasket does today, plus what's planned next.
 
 ---
 
-## Current Features
+## ✅ Live in MVP (v0.2.0)
 
-### 1. Repository & Documentation Setup
-- **Status:** Complete
-- **Date:** 2026-05-05
-- README, CHANGELOG, feature docs, and implementation docs initialised
-- GitHub repository created at github.com/saipatel/aussiebasket
+### 1. Receipt upload & parsing
+- **Where:** `/upload`
+- Paste receipt text, drop a `.txt` file, or generate a sample
+- Parser extracts: store, line items, quantities, prices
+- Skips noise lines (TOTAL, GST, EFTPOS, change, tendered)
+- Quantity syntax: `2 x Eggs 6.50`
+- Auto-detects store from header text
 
----
+### 2. Savings dashboard
+- **Where:** `/dashboard`
+- 4 hero stats: receipts, total spent, total savings, cheapest store
+- Recent receipts list with per-receipt savings badges
+- Empty state guides first-time users to upload
 
-## Planned Features
+### 3. Item-level comparison
+- **Where:** `/receipts/[id]`
+- For each item: what you paid, the cheapest price, which store, savings
+- Whole-basket totals if you bought everything at Coles vs Woolies vs ALDI vs IGA
+- Highlights cheapest single store for the basket
 
-### Shopping Basket
-- Add, remove, and update item quantities
-- Persistent basket across sessions (logged-in users)
-- Guest basket with session storage
+### 4. Smart shopping list (Compare)
+- **Where:** `/compare`
+- Searchable catalogue with side-by-side Coles / Woolies / ALDI / IGA prices
+- Cheapest cell highlighted on each row
+- Build a basket; sticky sidebar shows total at each store + max possible savings
+- Quantity controls inline
 
-### Product Catalogue
-- Browse products by category
-- Search by keyword, brand, or price range
-- Product detail pages with images and descriptions
+### 5. Nearby stores
+- **Where:** `/nearby`
+- Postcode input → 4 stores returned with mock distance + open/closed status
+- Sorted by distance
 
-### User Accounts
-- Register and login
-- View order history
-- Save multiple delivery addresses
-
-### Checkout & Payments
-- Australian payment gateway (Stripe / PayPal)
-- GST calculation and display
-- Multiple shipping options (standard, express)
-
-### Order Management
-- Order confirmation emails
-- Real-time order tracking
-- Returns and refund requests
-
-### Admin Panel
-- Product and inventory management
-- Order management dashboard
-- User management
+### 6. Receipt history
+- All uploads persisted in `data/receipts.json`
+- Aggregate stats roll up automatically
 
 ---
 
-## Feature Update Log
+## 🛤️ Roadmap
 
-| Date       | Feature                        | Change         |
-|------------|-------------------------------|----------------|
-| 2026-05-05 | Documentation                 | Initial setup  |
+### Near-term (next 1–2 sprints)
+- **Real OCR** for receipt photos (Tesseract.js client-side, or cloud vision)
+- **PDF parsing** for emailed e-receipts
+- **Live price feed** — scrape / API-integrate Coles + Woolies for fresh prices
+- **Per-item alerts** — "Milk 2L just dropped to $2.99 at ALDI"
+
+### Medium-term
+- **User accounts** (NextAuth + Postgres) and multi-device sync
+- **Pantry tracker** — log what's at home, expiry dates, auto-deduct from receipts
+- **Weekly meal planner** → auto-generated shopping list optimised across stores
+- **Specials & catalogue ingestion** — weekly catalogue parsing for half-price items
+- **Loyalty card integration** (Flybuys, Everyday Rewards)
+
+### Long-term
+- **Group households** — shared baskets and savings goals
+- **Price prediction** — "wait 3 days, this usually drops on Wed"
+- **Mobile app** (React Native)
+- **Carbon footprint per shop** as a secondary signal
+
+---
+
+## 🧪 Quality bars (definition of done for any feature)
+- Mobile responsive
+- Loading + empty + error states
+- Keyboard accessible
+- AUD formatting + GST awareness
+- Documented in this file + CHANGELOG entry
+
+---
+
+## 📜 Feature update log
+
+| Date       | Feature                          | Change                                    |
+|------------|----------------------------------|-------------------------------------------|
+| 2026-05-05 | Documentation                    | Initial setup                             |
+| 2026-05-06 | MVP                              | All v0.2.0 features above shipped         |
