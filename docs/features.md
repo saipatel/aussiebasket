@@ -8,11 +8,13 @@ Everything AussieBasket does today, plus what's planned next.
 
 ### 1. Receipt upload & parsing
 - **Where:** `/upload`
+- **Photo OCR (NEW v0.3.0)** — drag-drop a JPG/PNG receipt, or use phone camera; Tesseract.js runs in-browser, shows live progress, and never uploads the image anywhere
 - Paste receipt text, drop a `.txt` file, or generate a sample
 - Parser extracts: store, line items, quantities, prices
 - Skips noise lines (TOTAL, GST, EFTPOS, change, tendered)
 - Quantity syntax: `2 x Eggs 6.50`
 - Auto-detects store from header text
+- Extracted text is editable before analysis so users can fix OCR errors
 
 ### 2. Savings dashboard
 - **Where:** `/dashboard`
@@ -47,8 +49,9 @@ Everything AussieBasket does today, plus what's planned next.
 ## 🛤️ Roadmap
 
 ### Near-term (next 1–2 sprints)
-- **Real OCR** for receipt photos (Tesseract.js client-side, or cloud vision)
+- ~~**Real OCR** for receipt photos (Tesseract.js client-side)~~ ✅ shipped in v0.3.0
 - **PDF parsing** for emailed e-receipts
+- **Cloud OCR fallback** for low-quality photos (Google Vision / Azure)
 - **Live price feed** — scrape / API-integrate Coles + Woolies for fresh prices
 - **Per-item alerts** — "Milk 2L just dropped to $2.99 at ALDI"
 
@@ -82,3 +85,4 @@ Everything AussieBasket does today, plus what's planned next.
 |------------|----------------------------------|-------------------------------------------|
 | 2026-05-05 | Documentation                    | Initial setup                             |
 | 2026-05-06 | MVP                              | All v0.2.0 features above shipped         |
+| 2026-05-06 | OCR scan                         | v0.3.0 — Tesseract.js client-side scanner |

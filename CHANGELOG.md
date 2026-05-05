@@ -6,6 +6,24 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.3.0] — 2026-05-06
+
+### Added
+- **In-browser receipt OCR** powered by `tesseract.js`
+  - New `ReceiptScanner` component on `/upload`
+  - Drag-drop, file picker, and "Use camera" (mobile) entry points
+  - Live progress bar + status indicator while scanning
+  - Image preview thumbnail
+  - Extracted text appended to the editable textarea so users can fix mistakes before analysing
+  - Runs entirely client-side — photos never leave the device
+
+### Changed
+- `/upload` page restructured with OCR-first UX (scan → review → analyse)
+- Tips sidebar updated for OCR best practices
+- README, features.md, implementation.md updated for OCR
+
+---
+
 ## [0.2.0] — 2026-05-06 — MVP
 
 ### Added

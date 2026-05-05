@@ -12,6 +12,7 @@ Architecture, data flow, and engineering decisions for AussieBasket.
 | Language | TypeScript (strict) |
 | Styling | Tailwind CSS + custom brand palette |
 | Icons | lucide-react |
+| OCR | tesseract.js (client-side, dynamic import) |
 | Storage | File-based JSON (`data/receipts.json`) — MVP |
 | Server | Next.js API routes (Node runtime) |
 
@@ -87,6 +88,20 @@ Future targets: Postgres + Drizzle, NextAuth, Tesseract for OCR, real price feed
   saving: number;        // pricePaid − cheapestPrice * qty
 }
 ```
+
+---
+
+## OCR pipeline (v0.3.0)
+
+`components/ReceiptScanner.tsx`
+
+1. User drops/picks an image, or uses phone camera (`capture="environment"`).
+2. We `await import("tesseract.js")` — keeps the ~2 MB worker bundle out of the main JS chunk.
+3. `Tesseract.recognize(file, "eng", { logger })` runs the WASM worker entirely in the browser; `logger` updates a progress bar + status string (`loading core`, `recognizing text`, etc.).
+4. Resulting text is **appended** to the existing textarea (so multi-page receipts can be stitched together) and the user can edit before submitting.
+5. From there the standard text-parsing pipeline (below) takes over.
+
+**Privacy:** images never hit the server. **Trade-off:** initial scan downloads the eng traineddata (~10 MB cached after first run); cloud OCR fallback is on the roadmap for low-quality photos.
 
 ---
 
@@ -183,3 +198,4 @@ WOOLIES_API_KEY=
 |------------|---------------------|-----------------------------------------------------|
 | 2026-05-05 | All                 | Initial documentation created                       |
 | 2026-05-06 | All                 | Rewritten to reflect MVP architecture & data model  |
+| 2026-05-06 | OCR pipeline        | Added Tesseract.js client-side scanner              |
