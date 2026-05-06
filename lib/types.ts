@@ -16,6 +16,11 @@ export interface ReceiptItem {
   cheapestStore: Store;
   cheapestPrice: number;
   saving: number;
+  // Best current weekly special (if any) — beats the everyday cheapest
+  specialStore?: Store;
+  specialPrice?: number;
+  specialLabel?: string;
+  specialSaving?: number;
 }
 
 export interface Receipt {
@@ -34,4 +39,20 @@ export interface NearbyStore {
   distanceKm: number;
   address: string;
   openNow: boolean;
+}
+
+export type SpecialKind = "half-price" | "multi-buy" | "member" | "clearance";
+
+export interface Special {
+  id: string;
+  productId: string;
+  store: Store;
+  kind: SpecialKind;
+  // Effective per-unit price during the special
+  salePrice: number;
+  // Optional details for multi-buy: e.g., 2-for-$5
+  multiBuy?: { qty: number; total: number };
+  startDate: string; // ISO
+  endDate: string;   // ISO
+  label: string;     // human-readable, e.g. "½ Price"
 }

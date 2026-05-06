@@ -6,6 +6,27 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.5.0] — 2026-05-06
+
+### Added
+- **Weekly specials catalogue** (`lib/specials.ts`)
+  - Deterministic seed-based weekly rotation (same week → same deals, rotates each week)
+  - 4 deal types: half-price, multi-buy (2-for-X), member offer, clearance
+  - Mon–Sun window with start/end dates per special
+- **`/specials` page** — browse this week's deals across all 4 chains, sorted by % saved, with kind badges, multi-buy detail, and per-unit savings
+- **`GET /api/specials`** — listing endpoint with `?store=` and `?kind=` filters
+- **Receipt-level integration** — every uploaded receipt item now records the best matching weekly special (if it beats everyday cheapest); shown inline on the receipt detail with a "⚡" indicator
+- **Dashboard widgets**:
+  - "On special — items you buy" personalised feed when the user has receipts
+  - "Top deals this week" fallback for new users
+- Specials added to navbar
+
+### Changed
+- `ReceiptItem` type extended with `specialStore`, `specialPrice`, `specialLabel`, `specialSaving`
+- README, features.md, implementation.md updated for specials engine
+
+---
+
 ## [0.4.0] — 2026-05-06
 
 ### Added

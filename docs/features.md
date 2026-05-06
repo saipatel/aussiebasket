@@ -37,12 +37,20 @@ Everything AussieBasket does today, plus what's planned next.
 - Build a basket; sticky sidebar shows total at each store + max possible savings
 - Quantity controls inline
 
-### 5. Nearby stores
+### 5. Weekly specials (NEW v0.5.0)
+- **Where:** `/specials` (top nav)
+- Half-price, multi-buy (e.g. 2-for-$5), member-only, clearance — sorted by % saved
+- Deal cards show: store, sale price, everyday price (struck through), per-unit savings, multi-buy detail
+- **Personalised dashboard widget**: "On special — items you buy" shows current deals on products from your receipt history
+- **Receipt-level integration**: each item flags whether it's currently on special elsewhere (⚡ indicator)
+- Deals rotate weekly via deterministic seed — same calendar week always shows the same deals
+
+### 6. Nearby stores
 - **Where:** `/nearby`
 - Postcode input → 4 stores returned with mock distance + open/closed status
 - Sorted by distance
 
-### 6. Receipt history
+### 7. Receipt history
 - All uploads persisted in `data/receipts.json`
 - Aggregate stats roll up automatically
 
@@ -61,7 +69,7 @@ Everything AussieBasket does today, plus what's planned next.
 - **User accounts** (NextAuth + Postgres) and multi-device sync
 - **Pantry tracker** — log what's at home, expiry dates, auto-deduct from receipts
 - **Weekly meal planner** → auto-generated shopping list optimised across stores
-- **Specials & catalogue ingestion** — weekly catalogue parsing for half-price items
+- ~~**Specials & catalogue**~~ ✅ shipped in v0.5.0 (mock data; live catalogue scraping next)
 - **Loyalty card integration** (Flybuys, Everyday Rewards)
 
 ### Long-term
@@ -89,3 +97,4 @@ Everything AussieBasket does today, plus what's planned next.
 | 2026-05-06 | MVP                              | All v0.2.0 features above shipped         |
 | 2026-05-06 | OCR scan                         | v0.3.0 — Tesseract.js client-side scanner |
 | 2026-05-06 | PDF + cloud OCR                  | v0.4.0 — pdfjs-dist for e-receipts, OCR.space fallback |
+| 2026-05-06 | Weekly specials                  | v0.5.0 — catalogue, dashboard widget, receipt integration |

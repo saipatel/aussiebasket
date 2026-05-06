@@ -54,7 +54,10 @@ export default function ReceiptPage({ params }: { params: { id: string } }) {
       </section>
 
       <section className="card">
-        <h2 className="font-semibold mb-3">Item-by-item</h2>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-semibold">Item-by-item</h2>
+          <span className="text-xs text-ink-500">⚡ = on special this week</span>
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="text-left text-ink-500">
@@ -70,7 +73,14 @@ export default function ReceiptPage({ params }: { params: { id: string } }) {
             <tbody>
               {r.items.map((it) => (
                 <tr key={it.productId} className="border-b border-black/[0.04]">
-                  <td className="py-2 font-medium">{it.name}</td>
+                  <td className="py-2 font-medium">
+                    {it.name}
+                    {it.specialPrice && (
+                      <div className="text-xs text-brand-700 font-medium">
+                        ⚡ {it.specialLabel} at {it.specialStore} — save {aud(it.specialSaving!)}
+                      </div>
+                    )}
+                  </td>
                   <td className="py-2">{it.qty}</td>
                   <td className="py-2">{aud(it.pricePaid)}</td>
                   <td className="py-2">{aud(it.cheapestPrice * it.qty)}</td>

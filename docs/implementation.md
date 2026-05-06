@@ -153,6 +153,23 @@ The `/compare` page calls `GET /api/compare` once for the catalogue, then comput
 
 ---
 
+## Weekly specials engine (`lib/specials.ts`)
+
+- **Window**: `currentWeekWindow()` returns the Mon–Sun bracket covering today.
+- **Determinism**: `weekSeed(date)` returns the absolute ISO-week number → fed into a small LCG RNG. Same week → same draws, no DB needed.
+- **Picking**: 12 unique products per week from the catalogue.
+- **Store assignment**: weighted (Coles 32%, Woolies 32%, ALDI 18%, IGA 18%) so the bigger chains run more deals (matches reality).
+- **Deal kind**:
+  - 50% half-price (`base × 0.5`)
+  - 25% multi-buy (`2 × base × 0.7`, displayed as `2 for $X`)
+  - 15% member offer (`base × 0.75`)
+  - 10% clearance (`base × 0.6`)
+- **`specialFor(productId)`** is called by the receipt parser; if `salePrice × qty < cheapestEverydayPrice × qty`, the receipt item records `specialStore`, `specialPrice`, `specialLabel`, `specialSaving` and the receipt detail page shows a ⚡ row hint.
+
+When live catalogue scraping lands, `getCurrentSpecials()` will be the swap point — same shape, real data.
+
+---
+
 ## Nearby store lookup
 
 `lib/nearby.ts` — deterministic mock based on postcode hash. Returns 4 stores (one per chain) with synthetic distance and open/closed status. Sorted ascending by distance. Replaces with real geo provider (Mapbox / Google Places) post-MVP.
@@ -222,3 +239,4 @@ WOOLIES_API_KEY=
 | 2026-05-06 | All                 | Rewritten to reflect MVP architecture & data model  |
 | 2026-05-06 | OCR pipeline        | Added Tesseract.js client-side scanner              |
 | 2026-05-06 | PDF + cloud OCR     | Added pdfjs-dist parsing and OCR.space fallback     |
+| 2026-05-06 | Specials engine     | Weekly seeded catalogue + receipt integration       |

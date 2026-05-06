@@ -1,5 +1,6 @@
 import { Receipt, ReceiptItem, Store } from "./types";
 import { findProduct, cheapestFor, PRODUCTS } from "./products";
+import { specialFor } from "./specials";
 
 const STORE_HINTS: Record<string, Store> = {
   coles: "Coles",
@@ -44,6 +45,9 @@ export function parseReceiptText(text: string): {
     const cheapest = cheapestFor(product.id)!;
     const lineTotal = pricePaid;
     const cheapestLine = cheapest.price * qty;
+    const sp = specialFor(product.id);
+    const specialLine = sp ? sp.salePrice * qty : Infinity;
+    const beatsCheapest = sp && specialLine < cheapestLine;
     items.push({
       productId: product.id,
       name: product.name,
@@ -52,6 +56,14 @@ export function parseReceiptText(text: string): {
       cheapestStore: cheapest.store,
       cheapestPrice: cheapest.price,
       saving: Math.max(0, lineTotal - cheapestLine),
+      ...(beatsCheapest && sp
+        ? {
+            specialStore: sp.store,
+            specialPrice: sp.salePrice,
+            specialLabel: sp.label,
+            specialSaving: round2(lineTotal - specialLine),
+          }
+        : {}),
     });
   }
 

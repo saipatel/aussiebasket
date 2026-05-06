@@ -14,6 +14,7 @@ Stop overpaying at the supermarket. Upload your **Coles / Woolworths / ALDI / IG
 | **📄 PDF e-receipts** | Drop emailed Coles/Woolies PDF receipts — text extracted directly via PDF.js |
 | **☁️ Cloud OCR fallback** | One-click higher-accuracy retry for blurry photos (OCR.space) |
 | **Smart receipt parsing** | Paste or drop a receipt, we extract every item and the store automatically |
+| **🏷️ Weekly specials** | Half-price, multi-buy, member, clearance — auto-matched against your shopping history |
 | **Savings dashboard** | Total spent, total savings, savings %, and your cheapest store at a glance |
 | **Item-by-item comparison** | See where each product is cheapest, and how much you'd save |
 | **Whole-basket comparison** | "If I bought this whole shop at Coles vs ALDI..." — instant totals |

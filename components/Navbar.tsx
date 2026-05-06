@@ -1,13 +1,14 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ShoppingBasket, LayoutDashboard, Upload, BarChart3, MapPin } from "lucide-react";
+import { ShoppingBasket, LayoutDashboard, Upload, BarChart3, MapPin, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const links = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/upload", label: "Upload", icon: Upload },
   { href: "/compare", label: "Compare", icon: BarChart3 },
+  { href: "/specials", label: "Specials", icon: Sparkles },
   { href: "/nearby", label: "Nearby", icon: MapPin },
 ];
 

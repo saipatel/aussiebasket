@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { getReceipts } from "@/lib/db";
+import { getCurrentSpecials } from "@/lib/specials";
+import { PRODUCTS } from "@/lib/products";
 import StatCard from "@/components/StatCard";
 import { aud, fmtDate } from "@/lib/utils";
-import { PiggyBank, Receipt as ReceiptIcon, TrendingDown, ShoppingCart, Upload, ArrowRight } from "lucide-react";
+import { PiggyBank, Receipt as ReceiptIcon, TrendingDown, ShoppingCart, Upload, ArrowRight, Sparkles, Tag } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +22,29 @@ export default function DashboardPage() {
     }
   }
   const bestStore = Object.entries(categorySavings).sort((a, b) => b[1] - a[1])[0];
+
+  const specials = getCurrentSpecials();
+  const topSpecials = [...specials]
+    .map((s) => {
+      const p = PRODUCTS.find((x) => x.id === s.productId)!;
+      const everyday = Math.min(...Object.values(p.prices));
+      return { s, p, saving: everyday - s.salePrice, everyday };
+    })
+    .sort((a, b) => b.saving - a.saving)
+    .slice(0, 3);
+
+  // Items in user's history that are on special this week
+  const owned = new Set<string>();
+  for (const r of receipts) for (const it of r.items) owned.add(it.productId);
+  const personalSpecials = specials
+    .filter((s) => owned.has(s.productId))
+    .map((s) => {
+      const p = PRODUCTS.find((x) => x.id === s.productId)!;
+      const everyday = Math.min(...Object.values(p.prices));
+      return { s, p, saving: everyday - s.salePrice };
+    })
+    .sort((a, b) => b.saving - a.saving)
+    .slice(0, 6);
 
   return (
     <div className="space-y-6">
@@ -39,6 +64,61 @@ export default function DashboardPage() {
         <StatCard icon={PiggyBank} tone="save" label="Total savings" value={aud(totalSavings)} sublabel={`${(savingsPct * 100).toFixed(1)}% of spend`} />
         <StatCard icon={TrendingDown} tone="save" label="Cheapest store" value={bestStore ? bestStore[0] : "—"} sublabel={bestStore ? `${aud(bestStore[1])} saved here` : "Upload a receipt to see"} />
       </div>
+
+      {personalSpecials.length > 0 && (
+        <section className="card bg-gradient-to-br from-brand-50 to-white">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-semibold flex items-center gap-2">
+              <Sparkles size={18} className="text-brand-600" /> On special — items you buy
+            </h2>
+            <Link href="/specials" className="text-sm text-brand-700 font-medium flex items-center gap-1">
+              See all <ArrowRight size={14} />
+            </Link>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {personalSpecials.map(({ s, p, saving }) => (
+              <div key={s.id} className="rounded-xl bg-white border border-black/[0.06] p-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="text-xs text-ink-500">{s.store}</div>
+                    <div className="font-medium text-sm truncate">{p.name}</div>
+                  </div>
+                  <span className="badge badge-save shrink-0"><Tag size={12} /> {s.label}</span>
+                </div>
+                <div className="mt-2 flex items-baseline gap-2">
+                  <span className="text-lg font-bold text-brand-700">{aud(s.salePrice)}</span>
+                  <span className="text-xs text-ink-500">save {aud(saving)} / unit</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {personalSpecials.length === 0 && topSpecials.length > 0 && (
+        <section className="card bg-gradient-to-br from-brand-50 to-white">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-semibold flex items-center gap-2">
+              <Sparkles size={18} className="text-brand-600" /> Top deals this week
+            </h2>
+            <Link href="/specials" className="text-sm text-brand-700 font-medium flex items-center gap-1">
+              See all <ArrowRight size={14} />
+            </Link>
+          </div>
+          <div className="grid sm:grid-cols-3 gap-3">
+            {topSpecials.map(({ s, p, saving }) => (
+              <div key={s.id} className="rounded-xl bg-white border border-black/[0.06] p-3">
+                <div className="text-xs text-ink-500">{s.store}</div>
+                <div className="font-medium text-sm">{p.name}</div>
+                <div className="mt-2 flex items-baseline gap-2">
+                  <span className="text-lg font-bold text-brand-700">{aud(s.salePrice)}</span>
+                  <span className="text-xs text-ink-500">save {aud(saving)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="card">
         <div className="flex items-center justify-between mb-4">
