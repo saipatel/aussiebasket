@@ -12,7 +12,9 @@ Architecture, data flow, and engineering decisions for AussieBasket.
 | Language | TypeScript (strict) |
 | Styling | Tailwind CSS + custom brand palette |
 | Icons | lucide-react |
-| OCR | tesseract.js (client-side, dynamic import) |
+| OCR (local) | tesseract.js (client-side, dynamic import) |
+| OCR (cloud fallback) | OCR.space API via `/api/ocr` |
+| PDF text | pdfjs-dist 3.x (client-side, worker from CDN) |
 | Storage | File-based JSON (`data/receipts.json`) — MVP |
 | Server | Next.js API routes (Node runtime) |
 
@@ -91,17 +93,32 @@ Future targets: Postgres + Drizzle, NextAuth, Tesseract for OCR, real price feed
 
 ---
 
-## OCR pipeline (v0.3.0)
+## OCR / PDF pipeline (v0.3.0 + v0.4.0)
 
-`components/ReceiptScanner.tsx`
+`components/ReceiptScanner.tsx` accepts JPG/PNG **and** PDF in one dropzone, then routes:
 
+### Image → Tesseract.js (local)
 1. User drops/picks an image, or uses phone camera (`capture="environment"`).
-2. We `await import("tesseract.js")` — keeps the ~2 MB worker bundle out of the main JS chunk.
-3. `Tesseract.recognize(file, "eng", { logger })` runs the WASM worker entirely in the browser; `logger` updates a progress bar + status string (`loading core`, `recognizing text`, etc.).
-4. Resulting text is **appended** to the existing textarea (so multi-page receipts can be stitched together) and the user can edit before submitting.
-5. From there the standard text-parsing pipeline (below) takes over.
+2. `await import("tesseract.js")` — keeps the ~2 MB worker bundle out of the main JS chunk.
+3. `Tesseract.recognize(file, "eng", { logger })` runs the WASM worker in the browser; logger drives a progress bar + status string.
+4. Result is appended to the editable textarea so users can correct OCR errors.
 
-**Privacy:** images never hit the server. **Trade-off:** initial scan downloads the eng traineddata (~10 MB cached after first run); cloud OCR fallback is on the roadmap for low-quality photos.
+**Privacy:** images never hit the server. **Cost:** first scan downloads the eng traineddata (~10 MB, cached forever).
+
+### Image → Cloud OCR (fallback)
+- "Cloud OCR" button surfaces after a local scan; auto-suggested when local OCR returns < 4 lines.
+- Client base64-encodes the image and POSTs to `/api/ocr`.
+- Server route forwards to **OCR.space** (`api.ocr.space/parse/image`) using `OCR_SPACE_KEY` env var (falls back to public `helloworld` demo key).
+- Returns `{ text }` or `{ error }`. Text is appended to the textarea.
+- Trade-off: only the photo bytes leave the device, but accuracy on tricky receipts is meaningfully better than local Tesseract.
+
+### PDF → pdfjs-dist (no OCR)
+1. `lib/pdf.ts` dynamically imports `pdfjs-dist/build/pdf` and points `GlobalWorkerOptions.workerSrc` at the CDN.
+2. For each page, `getTextContent()` returns text items with `transform` matrices.
+3. We bucket items by Y-position (rounded), sort buckets top-to-bottom, sort items in each bucket left-to-right, and join — reconstructing receipt-shaped lines so item names stay aligned with prices.
+4. Result is appended to the textarea, ready for the standard parser.
+
+**Why not OCR PDFs:** emailed e-receipts already contain real text — OCR'ing them would lose accuracy and add latency.
 
 ---
 
@@ -167,13 +184,18 @@ The file is **gitignored**; created lazily on first write. Trade-off: simple, ze
 
 ## Environment variables
 
-None required for MVP. Future:
+Currently optional:
+
+```
+OCR_SPACE_KEY=    # Cloud OCR fallback. Defaults to public "helloworld" key (rate-limited).
+```
+
+Future:
 
 ```
 DATABASE_URL=
 NEXTAUTH_SECRET=
 NEXTAUTH_URL=
-OCR_API_KEY=
 COLES_API_KEY=
 WOOLIES_API_KEY=
 ```
@@ -199,3 +221,4 @@ WOOLIES_API_KEY=
 | 2026-05-05 | All                 | Initial documentation created                       |
 | 2026-05-06 | All                 | Rewritten to reflect MVP architecture & data model  |
 | 2026-05-06 | OCR pipeline        | Added Tesseract.js client-side scanner              |
+| 2026-05-06 | PDF + cloud OCR     | Added pdfjs-dist parsing and OCR.space fallback     |

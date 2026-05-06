@@ -6,6 +6,27 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.4.0] — 2026-05-06
+
+### Added
+- **PDF e-receipt parsing** via `pdfjs-dist` (client-side)
+  - Extracts text directly from emailed PDF receipts (Coles/Woolies digital receipts)
+  - Reconstructs lines by Y-position so prices stay aligned with item names
+  - Per-page progress indicator
+  - Worker loaded from CDN (no bundle bloat)
+- **Cloud OCR fallback** via OCR.space API
+  - New `POST /api/ocr` server route (uses `OCR_SPACE_KEY` env var, falls back to public demo key)
+  - "Cloud OCR" button surfaces in the scanner card after a local scan
+  - Auto-suggested when local Tesseract returns very few lines
+  - Re-scan button to retry locally
+- `.env.example` documenting `OCR_SPACE_KEY`
+
+### Changed
+- `ReceiptScanner` accepts JPG/PNG **and** PDF in one dropzone
+- Upload page tips updated for PDF + cloud fallback workflow
+
+---
+
 ## [0.3.0] — 2026-05-06
 
 ### Added

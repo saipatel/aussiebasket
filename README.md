@@ -11,6 +11,8 @@ Stop overpaying at the supermarket. Upload your **Coles / Woolworths / ALDI / IG
 | Feature | What it does |
 |---|---|
 | **📷 Photo OCR** | Snap or drop a receipt photo — Tesseract.js extracts text **in your browser** (privacy-safe) |
+| **📄 PDF e-receipts** | Drop emailed Coles/Woolies PDF receipts — text extracted directly via PDF.js |
+| **☁️ Cloud OCR fallback** | One-click higher-accuracy retry for blurry photos (OCR.space) |
 | **Smart receipt parsing** | Paste or drop a receipt, we extract every item and the store automatically |
 | **Savings dashboard** | Total spent, total savings, savings %, and your cheapest store at a glance |
 | **Item-by-item comparison** | See where each product is cheapest, and how much you'd save |
@@ -96,7 +98,9 @@ aussiebasket/
 
 ## 🗺️ Roadmap (next)
 
-- ~~Real OCR for receipt photos~~ ✅ shipped — PDF parsing & cloud OCR fallback next
+- ~~Real OCR for receipt photos~~ ✅ shipped (v0.3.0)
+- ~~PDF parsing for e-receipts~~ ✅ shipped (v0.4.0)
+- ~~Cloud OCR fallback for blurry photos~~ ✅ shipped (v0.4.0)
 - Live price scraping (Coles / Woolworths public APIs)
 - User auth & multi-device sync
 - Push alerts when staple items drop in price

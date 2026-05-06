@@ -8,7 +8,9 @@ Everything AussieBasket does today, plus what's planned next.
 
 ### 1. Receipt upload & parsing
 - **Where:** `/upload`
-- **Photo OCR (NEW v0.3.0)** — drag-drop a JPG/PNG receipt, or use phone camera; Tesseract.js runs in-browser, shows live progress, and never uploads the image anywhere
+- **Photo OCR** — drag-drop a JPG/PNG receipt, or use phone camera; Tesseract.js runs in-browser, shows live progress, and never uploads the image anywhere
+- **PDF e-receipt parsing (NEW v0.4.0)** — drop a Coles/Woolies email-receipt PDF; text is extracted directly via PDF.js (no OCR loss)
+- **Cloud OCR fallback (NEW v0.4.0)** — one-click "Cloud OCR" button in the scanner; auto-suggested when local OCR returns too few lines; uses OCR.space API (free tier by default, set `OCR_SPACE_KEY` for production)
 - Paste receipt text, drop a `.txt` file, or generate a sample
 - Parser extracts: store, line items, quantities, prices
 - Skips noise lines (TOTAL, GST, EFTPOS, change, tendered)
@@ -50,8 +52,8 @@ Everything AussieBasket does today, plus what's planned next.
 
 ### Near-term (next 1–2 sprints)
 - ~~**Real OCR** for receipt photos (Tesseract.js client-side)~~ ✅ shipped in v0.3.0
-- **PDF parsing** for emailed e-receipts
-- **Cloud OCR fallback** for low-quality photos (Google Vision / Azure)
+- ~~**PDF parsing** for emailed e-receipts~~ ✅ shipped in v0.4.0
+- ~~**Cloud OCR fallback**~~ ✅ shipped in v0.4.0 (OCR.space; Google Vision still on roadmap as a higher-accuracy paid option)
 - **Live price feed** — scrape / API-integrate Coles + Woolies for fresh prices
 - **Per-item alerts** — "Milk 2L just dropped to $2.99 at ALDI"
 
@@ -86,3 +88,4 @@ Everything AussieBasket does today, plus what's planned next.
 | 2026-05-05 | Documentation                    | Initial setup                             |
 | 2026-05-06 | MVP                              | All v0.2.0 features above shipped         |
 | 2026-05-06 | OCR scan                         | v0.3.0 — Tesseract.js client-side scanner |
+| 2026-05-06 | PDF + cloud OCR                  | v0.4.0 — pdfjs-dist for e-receipts, OCR.space fallback |

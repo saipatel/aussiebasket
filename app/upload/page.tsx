@@ -49,7 +49,7 @@ export default function UploadPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Upload a receipt</h1>
-        <p className="text-ink-500 text-sm">Scan a photo, paste text, or try a sample.</p>
+        <p className="text-ink-500 text-sm">Scan a photo or PDF, paste text, or try a sample.</p>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-4">
@@ -132,15 +132,15 @@ export default function UploadPage() {
         </div>
 
         <aside className="card space-y-3 h-fit">
-          <h3 className="font-semibold">Tips for best OCR results</h3>
+          <h3 className="font-semibold">Scanning tips</h3>
           <ul className="text-sm text-ink-700 space-y-2">
-            <li>• Take the photo in good light, receipt flat</li>
-            <li>• Crop to just the items + prices area</li>
-            <li>• Re-scan if the preview looks blurry</li>
-            <li>• You can <b>edit</b> the extracted text before analysing</li>
+            <li>• <b>PDFs</b>: e-receipts from Coles/Woolies emails work great — text is extracted directly (no OCR needed)</li>
+            <li>• <b>Photos</b>: take in good light, receipt flat, cropped to items area</li>
+            <li>• If a photo scan looks poor, hit <b>Cloud OCR</b> for a higher-accuracy retry</li>
+            <li>• You can <b>edit</b> extracted text before analysing</li>
           </ul>
           <div className="text-xs text-ink-500 pt-3 border-t">
-            OCR runs entirely in your browser — your photo never leaves your device.
+            Local OCR runs in your browser. Cloud OCR sends only the photo bytes to OCR.space and returns text.
           </div>
         </aside>
       </div>
