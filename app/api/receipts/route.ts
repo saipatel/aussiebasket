@@ -14,12 +14,25 @@ export async function POST(req: NextRequest) {
   const store: Store | undefined = body.store;
 
   if (!text && body.demo) text = sampleReceiptText(store ?? "Coles");
-  if (!text) return NextResponse.json({ error: "no text" }, { status: 400 });
+  if (!text || !text.trim()) return NextResponse.json({ error: "Receipt text is empty." }, { status: 400 });
 
-  const receipt = buildReceipt(text, postcode);
+  const built = buildReceipt(text, postcode);
+
+  // Strip diagnostics off the saved record but include them in the response
+  const { unmatched, rawLines, ...receipt } = built as any;
+
   if (receipt.items.length === 0) {
-    return NextResponse.json({ error: "no items recognised" }, { status: 422 });
+    return NextResponse.json(
+      {
+        error: "We couldn't recognise any products on this receipt.",
+        hint: "The OCR text is in the textarea — try editing item names to be clearer (e.g. 'Milk 2L 3.40') and resubmit.",
+        rawLines,
+        unmatched,
+      },
+      { status: 422 }
+    );
   }
+
   saveReceipt(receipt);
-  return NextResponse.json(receipt);
+  return NextResponse.json({ ...receipt, unmatched, rawLines });
 }

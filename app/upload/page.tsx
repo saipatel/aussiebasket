@@ -21,9 +21,12 @@ export default function UploadPage() {
   const [postcode, setPostcode] = useState("2000");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hint, setHint] = useState<string | null>(null);
+  const [unmatched, setUnmatched] = useState<string[]>([]);
+  const [rawLines, setRawLines] = useState<number | null>(null);
 
   async function submit(useText: string, demo = false) {
-    setBusy(true); setError(null);
+    setBusy(true); setError(null); setHint(null); setUnmatched([]); setRawLines(null);
     try {
       const res = await fetch("/api/receipts", {
         method: "POST",
@@ -31,7 +34,13 @@ export default function UploadPage() {
         body: JSON.stringify({ text: useText, postcode, demo }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed");
+      if (!res.ok) {
+        setError(data.error || "Failed");
+        setHint(data.hint || null);
+        setUnmatched(data.unmatched || []);
+        setRawLines(typeof data.rawLines === "number" ? data.rawLines : null);
+        return;
+      }
       router.push(`/receipts/${data.id}`);
     } catch (e: any) {
       setError(e.message);
@@ -104,7 +113,30 @@ export default function UploadPage() {
               </label>
             </div>
 
-            {error && <div className="text-sm text-red-600">{error}</div>}
+            {error && (
+              <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm space-y-2">
+                <div className="font-semibold text-red-700">{error}</div>
+                {hint && <div className="text-red-700/90">{hint}</div>}
+                {rawLines !== null && (
+                  <div className="text-xs text-red-700/80">
+                    Read {rawLines} lines from the receipt; matched 0 to our catalogue.
+                  </div>
+                )}
+                {unmatched.length > 0 && (
+                  <details className="text-xs">
+                    <summary className="cursor-pointer text-red-700">
+                      Show {unmatched.length} unmatched line{unmatched.length === 1 ? "" : "s"}
+                    </summary>
+                    <ul className="mt-1 list-disc ml-5 space-y-0.5 font-mono text-red-700/80">
+                      {unmatched.slice(0, 30).map((u, i) => <li key={i}>{u}</li>)}
+                    </ul>
+                  </details>
+                )}
+                <div className="text-xs text-ink-500">
+                  Our MVP catalogue covers ~20 staples (milk, bread, eggs, chicken, rice, pasta, cheese, etc.). Items outside that won&apos;t match yet — live catalogue is coming.
+                </div>
+              </div>
+            )}
 
             <div className="flex flex-wrap gap-3">
               <button

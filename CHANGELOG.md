@@ -6,6 +6,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.5.1] — 2026-05-06
+
+### Fixed
+- **Receipt parser much more forgiving** for real-world OCR output:
+  - Strips leading SKU/barcode digits (5+ digits) and shelf-tag prefixes
+  - Handles abbreviated names (FC MILK, WW BREAD, CHKN BRST, SPAG, OJ, TP, etc.) via abbreviation map + product keyword index
+  - Handles `2 X` / `2 *` quantity syntax
+  - Tolerates `EA` / `EACH` / `KG` trailing tokens
+  - Tolerates comma decimal separators (`$2,50`)
+  - Lowered fuzzy match threshold; added per-product keyword boost so partial matches succeed
+- **Better upload errors**: when no items match, the UI now shows the number of lines read, the unmatched lines, and a hint to edit the textarea — instead of a bare "no items recognised"
+
+---
+
 ## [0.5.0] — 2026-05-06
 
 ### Added

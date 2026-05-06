@@ -45,26 +45,57 @@ export const PRODUCTS: Product[] = [
     prices: { Coles: 9.50, Woolworths: 9.20, ALDI: 7.99, IGA: 11.50 } },
 ];
 
+const KEYWORDS: Record<string, string[]> = {
+  "milk-2l": ["milk"],
+  "bread-white": ["bread", "loaf"],
+  "eggs-12": ["egg"],
+  "bananas-1kg": ["banana"],
+  "chicken-breast": ["chicken", "breast", "chk"],
+  "rice-5kg": ["rice"],
+  "pasta-500g": ["pasta", "spaghetti", "spag"],
+  "olive-oil-1l": ["olive", "oil"],
+  "tomatoes-1kg": ["tomato", "roma"],
+  "cheese-block": ["cheese", "tasty", "cheddar"],
+  "butter-250g": ["butter"],
+  "coffee-1kg": ["coffee"],
+  "yogurt-1kg": ["yogurt", "yoghurt", "greek"],
+  "apples-1kg": ["apple", "pink"],
+  "potatoes-2kg": ["potato"],
+  "mince-beef": ["mince", "beef"],
+  "salmon-fillet": ["salmon"],
+  "cereal-corn": ["corn", "flake", "cereal"],
+  "orange-juice": ["orange", "juice"],
+  "toilet-paper-12": ["toilet", "paper", "tp"],
+};
+
 export function findProduct(name: string): Product | undefined {
   const n = name.toLowerCase().trim();
+  if (!n) return undefined;
+  const tokensA = n.split(/[^a-z0-9]+/).filter(Boolean);
+
   let best: Product | undefined;
   let bestScore = 0;
   for (const p of PRODUCTS) {
     const pn = p.name.toLowerCase();
     let score = 0;
     if (pn === n) score = 100;
-    else if (pn.includes(n) || n.includes(pn)) score = 60;
-    else {
-      const tokensA = n.split(/\s+/);
-      const tokensB = pn.split(/\s+/);
-      score = tokensA.filter((t) => tokensB.some((b) => b.includes(t) || t.includes(b))).length * 10;
+    else if (pn.includes(n)) score = 70;
+    else if (n.includes(pn)) score = 60;
+
+    const tokensB = pn.split(/\s+/).filter(Boolean);
+    const overlap = tokensA.filter((t) => t.length > 1 && tokensB.some((b) => b.startsWith(t) || t.startsWith(b))).length;
+    score = Math.max(score, overlap * 15);
+
+    // Keyword boost — handles abbreviated receipt names
+    const kws = KEYWORDS[p.id] || [];
+    for (const kw of kws) {
+      if (tokensA.some((t) => t.includes(kw) || kw.includes(t))) {
+        score += 25;
+      }
     }
-    if (score > bestScore) {
-      bestScore = score;
-      best = p;
-    }
+    if (score > bestScore) { bestScore = score; best = p; }
   }
-  return bestScore >= 10 ? best : undefined;
+  return bestScore >= 25 ? best : undefined;
 }
 
 export function cheapestFor(productId: string) {
